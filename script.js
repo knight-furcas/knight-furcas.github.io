@@ -53,7 +53,39 @@ document.addEventListener("DOMContentLoaded", (event) => {
     });
 
     const layer = new Konva.Layer();
+    const layerNumbers = new Konva.Layer();
     stage.add(layer);
+    stage.add(layerNumbers);
+
+    const totalNumbers = 8;
+    var min_parameter = Math.min(stage.width(), stage.height());
+
+    for (let i = 0; i < totalNumbers; i++) {
+        // Угол для каждого числа (в радианах), начинаем с верхней точки (-Math.PI / 2)
+        const angle = - (2 * i * Math.PI) / totalNumbers;
+        console.log(angle);
+
+        // Вычисляем координаты X и Y
+        const x = stage.width() / 2 + (min_parameter - 20) / 2 * Math.cos(angle);
+        const y = stage.height() / 2 + (min_parameter - 20) / 2 * Math.sin(angle);
+
+        const textNode = new Konva.Text({
+            text: (i + 1).toString(),
+            fontSize: 18,
+            fontFamily: 'Calibri',
+            fill: 'black',
+            align: 'center',
+            verticalAlign: 'middle',
+        });
+
+        // Центрируем текст относительно вычисленной точки
+        textNode.offsetX(textNode.width() / 2);
+        textNode.offsetY(textNode.height() / 2);
+        textNode.x(x);
+        textNode.y(y);
+
+        layerNumbers.add(textNode);
+    }
 
     function drawArc (symbol, ind, length_phrase) {
         var pair = dict.get(symbol);
@@ -82,7 +114,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
         layer.add(arc);
     };
 
-
     const textarea = document.getElementById("input_text");
     var radius = 25;
 
@@ -91,9 +122,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
         var clean_text = mytext.replace(/[^a-zA-z\s]/gi, "");
         console.log(clean_text);
         var uppercase_text = uppercase(clean_text);
-        var min_parameter = Math.min(stage.width(), stage.height());
+        min_parameter = Math.min(stage.width(), stage.height());
         var length  = Math.max(5, uppercase_text.length);
-        radius = min_parameter / (2 * length + 2);
+        radius = (min_parameter - 60) / (2 * length + 2);
         console.log(radius);
         var reversed_phrase = reverse(uppercase_text);
         console.log(reversed_phrase);
@@ -134,4 +165,17 @@ document.addEventListener("DOMContentLoaded", (event) => {
         
         drawPie()
     });
+
+    const leftColumn = document.getElementById("left_column");
+    const rightColumn = document.getElementById("right_column");
+
+    for (let s = 0; s < 13; s++) {
+        var symb = String.fromCharCode(65+s);
+        leftColumn.innerHTML += `<p>${symb}: ${dict.get(symb)[0]} - ${dict.get(symb)[1]}</p>`
+    };
+
+    for (let s = 13; s < 26; s++) {
+        var symb = String.fromCharCode(65+s);
+        rightColumn.innerHTML += `<p>${symb}: ${dict.get(symb)[0]} - ${dict.get(symb)[1]}</p>`
+    }
 });
